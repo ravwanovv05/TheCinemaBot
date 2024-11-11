@@ -1,0 +1,1 @@
+print('школьные няни'.capitalize())
