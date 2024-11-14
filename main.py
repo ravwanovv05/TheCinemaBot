@@ -5,8 +5,6 @@ import logging
 from aiogram.filters import Command
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
-
-from bot.api.movies.movies import Movie
 from bot.handlers.adverts.advertising import advert, send_post_for_all_users
 from bot.handlers.main import start, new
 from bot.handlers.movies.add_movies import get_title_of_movie, get_description_of_movie, get_year_of_movie, \
