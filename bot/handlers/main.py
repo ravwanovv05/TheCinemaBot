@@ -1,6 +1,8 @@
 from aiogram import types
 from bot.api.users.telegram_users import TelegramUser
+from bot.buttons.inline_buttons.inline_queries import search_inline
 from bot.buttons.inline_buttons.movies.categories import categories_list_btn
+from bot.buttons.reply_buttons.main import main_btn
 from utils.users.telegram_users import read_file, write_file
 
 
@@ -25,7 +27,7 @@ async def start(message: types.Message):
             telegram_id=telegram_id
         ).create_telegram_user()
 
-    await message.answer('Xush kelibsiz {}, kino code ni botga yuboring'.format(message.from_user.first_name))
+    await message.answer(f"Xush kelibsiz {message.from_user.first_name}", reply_markup=main_btn())
 
 
 async def new(message: types.Message):
@@ -34,4 +36,5 @@ async def new(message: types.Message):
         await message.answer('what are you going to add?', reply_markup=categories_list_btn(1))
 
 
-
+async def search_movies(message: types.Message):
+    await message.answer('Kerakli filmni topish uchun "Qidiruvni boshlash" tugmasini bosing va so\'rovingizni kiriting.', reply_markup=search_inline())

@@ -10,3 +10,4 @@ class MovieModel(StatesGroup):
     country_id = State()
     language_id = State()
     code = State()
+    file_id = State()

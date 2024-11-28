@@ -56,10 +56,9 @@ async def get_language_of_movie(query: types.CallbackQuery, state: FSMContext, b
 async def get_code_of_movie(message: types.Message, state: FSMContext, bot: Bot):
     channel_id = int(os.getenv('MOVIES_CHANNEL_ID'))
     data = await state.get_data()
-    movie = await bot.copy_message(
-        channel_id, message.from_user.id, message.message_id,
-        caption=write_details_of_movie(data)
-    )
+    movie = await bot.send_video(channel_id, message.video.file_id)
+    print(movie.message_id)
+    await state.update_data(file_id=movie.video.file_id)
     await state.update_data(code=movie.message_id)
     data = await state.get_data()
     add_movie = Movie(
@@ -68,6 +67,7 @@ async def get_code_of_movie(message: types.Message, state: FSMContext, bot: Bot)
         year=data['year'],
         series=data['series'],
         code=data['code'],
+        file_id=data['file_id'],
         country_id=int(data['country_id'].split('_')[-1]),
         language_id=int(data['language_id'].split('_')[-1]),
         category_id=int(data['category_id'])

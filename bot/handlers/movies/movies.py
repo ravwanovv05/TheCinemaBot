@@ -2,17 +2,12 @@ import os
 from dotenv import load_dotenv
 from aiogram import types, Bot
 from bot.api.movies.movies import Movie
+from bot.buttons.inline_buttons.inline_queries import search_inline
 
 load_dotenv()
 
-async def get_movie_by_code(message: types.Message, bot: Bot):
-    if message.text.isnumeric():
-        movie = Movie().movie_by_code(int(message.text))
-        if len(movie) == 0:
-            await message.answer('Noto\'g\'ri code!!!')
-        else:
-            channel_id = int(os.getenv('MOVIES_CHANNEL_ID'))
-            await bot.copy_message(message.from_user.id, channel_id, int(message.text))
+async def get_movies(message: types.Message, bot: Bot):
+    if message.text == 'Qidirish 🔍':
+        await message.answer('Kerakli filmni topish uchun "Qidiruvni boshlash" tugmasini bosing va so\'rovingizni kiriting.', reply_markup=search_inline())
     else:
-        await message.answer('Noto\'g\'ri code!!!')
-
+        pass
