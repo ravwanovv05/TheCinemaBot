@@ -22,8 +22,8 @@ class Category:
         if response.status_code == 200:
             return response.json()
 
-    def categories_by_parent(self, parent_id: int):
-        url = f"{os.getenv('CATEGORIES_BY_PARENT_URL')}/{parent_id}"
+    def categories(self):
+        url = os.getenv('CATEGORIES_URL')
         response = requests.get(url)
         if response.status_code == 200:
             return response.json()

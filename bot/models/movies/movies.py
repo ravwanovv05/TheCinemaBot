@@ -8,6 +8,7 @@ class MovieModel(StatesGroup):
     year = State()
     series = State()
     country_id = State()
+    genre_id = State()
     language_id = State()
     code = State()
     file_id = State()
