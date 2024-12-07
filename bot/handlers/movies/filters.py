@@ -1,17 +1,38 @@
+import os
 import pytz
 from datetime import datetime
+from dotenv import load_dotenv
 from aiogram import types, Bot
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InlineQueryResultArticle, InputTextMessageContent
+from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, InlineQueryResultVideo
 from bot.api.movies.categories import Category
+from bot.api.movies.countries import Country
+from bot.api.movies.genres import Genre
+from bot.api.movies.movies import Movie
 from bot.buttons.inline_buttons.movies.filters import filters_inline_keyboards
 
+load_dotenv()
 
-async def filter_movie(message: types.Message):
+CHANNEL_LINK = os.getenv('MOVIES_CHANNEL_LINK')
+
+
+async def filter_movie(message: types.Message, state: FSMContext, bot: Bot):
+    data = await state.get_data()
+    keys = list(data.keys())
+    from_year = f"{data['from_year']} dan" if 'from_year' in keys else 'hammasi'
+    to_year = f"{data['to_year']} gacha" if 'to_year' in keys else ''
+    type_ = f"{data['type'].split('_')[-2]}" if 'type' in keys else 'hammasi'
+    genre = f"{data['genre'].split('_')[-2]}" if 'genre' in keys else 'hammasi'
+    country = f"{data['country'].split('_')[-2]}" if 'country' in keys else 'hammasi'
+
+    await bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id - 1)
     await message.answer(
-        'Qidiruv filtri \n\n Filtrlarni tanlang va "🔍Filtr bo\'yicha qidirish" tugmasini bosing \n\n'
-        '\n Tanlangan: \n➡️ Yil: hammasi '
-        '\n➡️ Turi: hammasi \n➡️ Janr: hammasi \n➡️ Mamlakat: hammasi',
+        f'Qidiruv filtri \n\n Filtrlarni tanlang va "🔍 Filtr bo\'yicha qidirish" tugmasini bosing \n\n'
+        f'\n Tanlangan: \n'
+        f'➡️ Yil: {from_year} {to_year}\n'
+        f'➡️ Turi: {type_} \n'
+        f'➡️ Janr: {genre} \n'
+        f'➡️ Mamlakat: {country}',
         reply_markup=filters_inline_keyboards()
     )
 
@@ -42,7 +63,7 @@ async def select_data(inline_query: types.InlineQuery, state: FSMContext, bot: B
     elif query == 'filter_type':
         categories = Category().categories()
         for category in categories:
-            if 'type' in keys and int(data['type'].split('_')[-1]) == int(category['id']):
+            if 'type' in keys and int(data['type'].split('_')[-1]) == category['id']:
                 title = category['name'] + '✅'
             else:
                 title = category['name']
@@ -55,38 +76,129 @@ async def select_data(inline_query: types.InlineQuery, state: FSMContext, bot: B
                     )
                 )
             )
+    elif query == 'filter_genre':
+        genres = Genre().genres_list()
+        for genre in genres:
+            if 'genre' in keys and int(data['genre'].split('_')[-1]) == genre['id']:
+                title = genre['name'] + '✅'
+            else:
+                title = genre['name']
+            results.append(
+                InlineQueryResultArticle(
+                    id=str(genre['id']),
+                    title=title,
+                    input_message_content=InputTextMessageContent(
+                        message_text=f"{query}_{genre['name']}_{genre['id']}"
+                    )
+                )
+            )
+    elif query == 'filter_country':
+        countries = Country().list()
+        for country in countries:
+            if 'country' in keys and int(data['country'].split('_')[-1]) == country['id']:
+                title = country['name'] + '✅'
+            else:
+                title = country['name']
+            results.append(
+                InlineQueryResultArticle(
+                    id=str(country['id']),
+                    title=title,
+                    input_message_content=InputTextMessageContent(
+                        message_text=f"{query}_{country['name']}_{country['id']}"
+                    )
+                )
+            )
+    elif query == 'filter':
+        movies = Movie().movie_filter(
+            genre_id=int(data['genre'].split('_')[-1]) if 'genre' in keys else None,
+            country_id=int(data['country'].split('_')[-1]) if 'country' in keys else None,
+            from_year=data['from_year'] if 'from_year' in keys else None,
+            to_year=data['to_year'] if 'to_year' in keys else None,
+            category_id=int(data['type'].split('_')[-1]) if 'type' in keys else None
+        )
+        for movie in movies:
+            results.append(
+                InlineQueryResultVideo(
+                    id=str(movie['id']),
+                    video_url=f"https://t.me/{CHANNEL_LINK}/{movie['code']}",
+                    mime_type='video/mp4',
+                    title=f"{movie['title']} {movie['series']}",
+                    description=f"{movie['description']} | {movie['year']}",
+                    thumbnail_url='https://t4.ftcdn.net/jpg/04/48/02/97/360_F_448029739_g5nVVSEtqpEWDSzZIu0BQLfN0LwtE9m9.jpg',
+                )
+            )
 
     await bot.answer_inline_query(inline_query.id, results=results, cache_time=0, request_timeout=0)
 
 
 async def selected_data(message: types.Message, state: FSMContext, bot: Bot):
-    if message.text.startswith('filter_from_year'):
-        await bot.delete_message(message.chat.id, message.message_id)
-        await state.update_data(from_year=int(message.text.split('_')[-1]))
-
-    elif message.text.startswith('filter_to_year'):
-        await bot.delete_message(message.chat.id, message.message_id)
-        await state.update_data(to_year=int(message.text.split('_')[-1]))
-
-    elif message.text.startswith('filter_type'):
-        await bot.delete_message(message.chat.id, message.message_id)
-        await state.update_data(type=message.text)
-
     data = await state.get_data()
     keys = list(data.keys())
+    if message.text:
+        if message.text.startswith('filter_from_year'):
+            if 'to_year' in keys and int(message.text.split('_')[-1]) > int(data['to_year']):
+                from_year = int(data['to_year'])
+            else:
+                from_year = int(message.text.split('_')[-1])
+            await bot.delete_message(message.chat.id, message.message_id)
+            await state.update_data(from_year=from_year)
 
-    from_year = f"{data['from_year']} dan" if 'from_year' in keys else 'hammasi'
-    to_year = f"{data['to_year']} gacha" if 'to_year' in keys else ''
-    type_ = f"{data['type']} dan" if 'type' in keys else 'hammasi'
+        elif message.text.startswith('filter_to_year'):
+            if 'from_year' in keys and int(message.text.split('_')[-1]) < data['from_year']:
+                to_year = data['from_year']
+            else:
+                to_year = int(message.text.split('_')[-1])
+            await bot.delete_message(message.chat.id, message.message_id)
+            await state.update_data(to_year=to_year)
 
-    await bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id - 1)
-    await message.answer(
-        f'Qidiruv filtri \n\n Filtrlarni tanlang va "🔍Filtr bo\'yicha qidirish" tugmasini bosing \n\n'
-        f'\n Tanlangan: \n'
-        f'➡️ Yil: {from_year} {to_year}\n'
-        f'➡️ Turi: {type_} \n'
-        f'➡️ Janr: hammasi \n'
-        f'➡️ Mamlakat: hammasi',
-        reply_markup=filters_inline_keyboards()
-    )
+        elif message.text.startswith('filter_type'):
+            type_ = message.text.split('_')[-2] + '_' + message.text.split('_')[-1]
+            await bot.delete_message(message.chat.id, message.message_id)
+            await state.update_data(type=type_)
+
+        elif message.text.startswith('filter_genre'):
+            genre = message.text.split('_')[-2] + '_' + message.text.split('_')[-1]
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await state.update_data(genre=genre)
+
+        elif message.text.startswith('filter_country'):
+            country = message.text.split('_')[-2] + '_' + message.text.split('_')[-1]
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await state.update_data(country=country)
+
+        new_data = await state.get_data()
+        new_keys = list(new_data.keys())
+        from_year = f"{new_data['from_year']} dan" if 'from_year' in new_keys else 'hammasi'
+        to_year = f"{new_data['to_year']} gacha" if 'to_year' in new_keys else ''
+        type_ = f"{new_data['type'].split('_')[-2]}" if 'type' in new_keys else 'hammasi'
+        genre = f"{new_data['genre'].split('_')[-2]}" if 'genre' in new_keys else 'hammasi'
+        country = f"{new_data['country'].split('_')[-2]}" if 'country' in new_keys else 'hammasi'
+
+        await bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id - 1)
+        await message.answer(
+            f'Qidiruv filtri \n\n Filtrlarni tanlang va "🔍 Filtr bo\'yicha qidirish" tugmasini bosing \n\n'
+            f'\n Tanlangan: \n'
+            f'➡️ Yil: {from_year} {to_year}\n'
+            f'➡️ Turi: {type_} \n'
+            f'➡️ Janr: {genre} \n'
+            f'➡️ Mamlakat: {country}',
+            reply_markup=filters_inline_keyboards()
+        )
+    elif message.video:
+        await bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id - 1)
+
+
+async def clear_filter(query: types.CallbackQuery, state: FSMContext, bot: Bot):
+    try:
+        await bot.edit_message_text(
+            'Qidiruv filtri \n\n Filtrlarni tanlang va "🔍 Filtr bo\'yicha qidirish" tugmasini bosing \n\n'
+            '\n Tanlangan: \n➡️ Yil: hammasi '
+            '\n➡️ Turi: hammasi \n➡️ Janr: hammasi \n➡️ Mamlakat: hammasi',
+            chat_id=query.from_user.id, message_id=query.message.message_id,
+            reply_markup=filters_inline_keyboards(),
+        )
+        await query.answer('✅ Filtr tozalandi')
+        await state.clear()
+    except Exception as e:
+        print(str(e))
 

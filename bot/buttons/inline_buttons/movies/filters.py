@@ -17,6 +17,9 @@ def filters_inline_keyboards():
         InlineKeyboardButton(text='➡️ Janr tanlash', switch_inline_query_current_chat='filter_genre')
     )
     builder.row(
+        InlineKeyboardButton(text='➡️ Mamlakat tanlash', switch_inline_query_current_chat='filter_country')
+    )
+    builder.row(
         InlineKeyboardButton(text='🎲 Tasodifiy kino', switch_inline_query_current_chat='random_movie')
     )
     builder.row(
@@ -26,6 +29,6 @@ def filters_inline_keyboards():
         InlineKeyboardButton(text='🔍 Qidiruv', callback_data='search')
     )
     builder.row(
-        InlineKeyboardButton(text='🔍 Filter bo\'yicha qidirish', switch_inline_query_current_chat='filter')
+        InlineKeyboardButton(text='🔍 Filtr bo\'yicha qidirish', switch_inline_query_current_chat='filter')
     )
     return builder.as_markup()

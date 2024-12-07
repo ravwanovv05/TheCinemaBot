@@ -72,7 +72,7 @@ class Movie:
             category_id: int = None,
     ):
 
-        url = os.getenv('MOVIES_BY_YEAR')
+        url = os.getenv('MOVIE_FILTER_URL')
         response = requests.get(
             url, data={
                 'from_year': from_year,

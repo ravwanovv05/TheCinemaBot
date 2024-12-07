@@ -13,7 +13,7 @@ from bot.handlers.movies.add_movies import (
 )
 from bot.handlers.movies.categories import sub_categories
 from bot.handlers.movies.collections import collections_handler, back_to_main_handler
-from bot.handlers.movies.filters import filter_movie, select_data, selected_data
+from bot.handlers.movies.filters import filter_movie, select_data, selected_data, clear_filter
 from bot.models.advertising import Advert
 from bot.models.movies.filters import Filter
 from bot.models.movies.movies import MovieModel
@@ -54,6 +54,7 @@ async def main():
     dp.message.register(filter_movie, lambda message: message.text == '🌪️ Filtr')
     dp.inline_query.register(select_data)
     dp.message.register(selected_data)
+    dp.callback_query.register(clear_filter, lambda query: query.data == 'clear_filter')
 
     dp.callback_query.register(back_to_main_handler, lambda query: query.data == 'back_to_main')
 
