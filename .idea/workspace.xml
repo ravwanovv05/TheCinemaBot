@@ -6,16 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a5f2172e-c16a-448d-a4ef-cc38d99517a9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/api/movies/countries.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/api/movies/countries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/api/movies/genres.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/api/movies/genres.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/api/movies/movies.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/api/movies/movies.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/buttons/inline_buttons/movies/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/buttons/inline_buttons/movies/filters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/handlers/movies/add_movies.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/handlers/movies/add_movies.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot/handlers/movies/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/handlers/movies/filters.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot/handlers/movies/search.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/handlers/movies/search.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/models/movies/movies.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/models/movies/movies.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/movies/movies.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/movies/movies.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,7 +201,7 @@
       <workItem from="1733579282791" duration="9563000" />
       <workItem from="1733770834212" duration="944000" />
       <workItem from="1733833190213" duration="2899000" />
-      <workItem from="1733902043840" duration="12286000" />
+      <workItem from="1733902043840" duration="19602000" />
     </task>
     <servers />
   </component>
