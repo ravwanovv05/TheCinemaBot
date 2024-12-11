@@ -13,14 +13,6 @@ load_dotenv()
 
 async def get_title_of_movie(message: types.Message, state: FSMContext, bot: Bot):
     await state.update_data(title=message.text)
-    await state.set_state(MovieModel.description)
-    await bot.delete_message(message.chat.id, message.message_id - 1)
-    await bot.delete_message(message.chat.id, message.message_id)
-    await message.answer('description:')
-
-
-async def get_description_of_movie(message: types.Message, state: FSMContext, bot: Bot):
-    await state.update_data(description=message.text)
     await state.set_state(MovieModel.year)
     await bot.delete_message(message.chat.id, message.message_id - 1)
     await bot.delete_message(message.chat.id, message.message_id)
@@ -29,14 +21,14 @@ async def get_description_of_movie(message: types.Message, state: FSMContext, bo
 
 async def get_year_of_movie(message: types.Message, state: FSMContext, bot: Bot):
     await state.update_data(year=message.text)
-    await state.set_state(MovieModel.series)
+    await state.set_state(MovieModel.part)
     await bot.delete_message(message.chat.id, message.message_id - 1)
     await bot.delete_message(message.chat.id, message.message_id)
-    await message.answer('series:')
+    await message.answer('part:')
 
 
 async def get_series_of_movie(message: types.Message, state: FSMContext, bot: Bot):
-    await state.update_data(series=message.text)
+    await state.update_data(part=message.text)
     await state.set_state(MovieModel.country_id)
     await bot.delete_message(message.chat.id, message.message_id - 1)
     await bot.delete_message(message.chat.id, message.message_id)
@@ -106,9 +98,8 @@ async def get_code_of_movie(message: types.Message, state: FSMContext, bot: Bot)
         data = await state.get_data()
         add_movie = Movie(
             title=data['title'],
-            description=data['description'],
             year=data['year'],
-            series=data['series'],
+            part=data['part'],
             code=data['code'],
             genre_id=int(data['genre_id'].split('_')[-1]),
             country_id=int(data['country_id'].split('_')[-1]),

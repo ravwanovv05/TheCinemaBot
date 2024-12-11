@@ -14,15 +14,14 @@ def current_year():
 
 class Movie:
     def __init__(
-            self, title: str = None, description: str = None, year: int = None, series: int = None, 
+            self, title: str = None, year: int = None, part: int = None,
             country_id: int = None, language_id: int = None, code: int = None, genre_id: int = None,
             category_id: int = None
             ):
         
         self.title = title
-        self.description = description
         self.year = year
-        self.series = series
+        self.part = part
         self.code = code
         self.genre_id = genre_id
         self.country_id = country_id
@@ -34,9 +33,8 @@ class Movie:
         response = requests.post(
             url, data={
                 'title': self.title,
-                'description': self.description,
                 'year': self.year,
-                'series': self.series,
+                'part': self.part,
                 'code': self.code,
                 'genre_id': self.genre_id,
                 'country_id': self.country_id,

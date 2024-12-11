@@ -8,7 +8,7 @@ from aiogram import Bot, Dispatcher
 from bot.handlers.advertisement.advertising import advert, send_post_for_all_users
 from bot.handlers.main import start, new
 from bot.handlers.movies.add_movies import (
-    get_title_of_movie, get_description_of_movie, get_year_of_movie,
+    get_title_of_movie, get_year_of_movie,
     get_series_of_movie, get_code_of_movie, get_language_of_movie, get_country_of_movie, get_genre_of_movie
 )
 from bot.handlers.movies.categories import sub_categories
@@ -17,7 +17,7 @@ from bot.handlers.movies.filters import filter_movie, select_data, selected_data
 from bot.models.advertising import Advert
 from bot.models.movies.filters import Filter
 from bot.models.movies.movies import MovieModel
-from bot.handlers.movies.search import inline_forward_video
+from bot.handlers.movies.search import search_movies
 
 load_dotenv()
 
@@ -39,24 +39,30 @@ async def main():
     # add movie
     dp.message.register(new, Command(commands='new'))
     dp.message.register(get_title_of_movie, MovieModel.title)
-    dp.message.register(get_description_of_movie, MovieModel.description)
     dp.message.register(get_year_of_movie, MovieModel.year)
-    dp.message.register(get_series_of_movie, MovieModel.series)
+    dp.message.register(get_series_of_movie, MovieModel.part)
     dp.callback_query.register(get_country_of_movie, MovieModel.country_id)
     dp.callback_query.register(get_genre_of_movie, MovieModel.genre_id)
     dp.callback_query.register(get_language_of_movie, MovieModel.language_id)
     dp.message.register(get_code_of_movie, MovieModel.code)
 
-    dp.callback_query.register(sub_categories, lambda query: query.data.startswith(('category', 'subcategory', 'backtocategory')))
+    dp.callback_query.register(
+        sub_categories, lambda query: query.data.startswith(('category', 'subcategory', 'backtocategory'))
+    )
 
     dp.message.register(collections_handler, lambda message: message.text == '🗂 To\'plamlar')
 
     dp.message.register(filter_movie, lambda message: message.text == '🌪️ Filtr')
-    dp.inline_query.register(select_data)
+    dp.inline_query.register(
+        select_data, lambda inline_query: inline_query.query in [
+            "#filter_from_year", "#filter_to_year", "#filter_type", "#filter_genre", "#filter_country", "#filter"
+        ]
+    )
     dp.message.register(selected_data)
     dp.callback_query.register(clear_filter, lambda query: query.data == 'clear_filter')
 
     dp.callback_query.register(back_to_main_handler, lambda query: query.data == 'back_to_main')
+    dp.inline_query.register(search_movies)
 
     try:
         await dp.start_polling(bot)

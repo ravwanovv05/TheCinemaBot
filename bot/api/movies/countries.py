@@ -14,3 +14,9 @@ class Country:
         response = requests.get(url)
         if response.status_code == 200:
             return response.json()
+
+    def details(self, pk):
+        url = os.getenv('COUNTRY_DETAILS_URL') + '/' +str(pk)
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.json()

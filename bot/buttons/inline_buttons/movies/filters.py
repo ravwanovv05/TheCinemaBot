@@ -5,19 +5,19 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 def filters_inline_keyboards():
     builder = InlineKeyboardBuilder()
     builder.add(
-        InlineKeyboardButton(text='➡️ Yil dan', switch_inline_query_current_chat='filter_from_year')
+        InlineKeyboardButton(text='➡️ Yil dan', switch_inline_query_current_chat='#filter_from_year')
     )
     builder.add(
-        InlineKeyboardButton(text='️️️️️➡️ Yil gacha', switch_inline_query_current_chat='filter_to_year')
+        InlineKeyboardButton(text='️️️️️➡️ Yil gacha', switch_inline_query_current_chat='#filter_to_year')
     )
     builder.row(
-        InlineKeyboardButton(text='➡️ Tur tanlash', switch_inline_query_current_chat='filter_type')
+        InlineKeyboardButton(text='➡️ Tur tanlash', switch_inline_query_current_chat='#filter_type')
     )
     builder.row(
-        InlineKeyboardButton(text='➡️ Janr tanlash', switch_inline_query_current_chat='filter_genre')
+        InlineKeyboardButton(text='➡️ Janr tanlash', switch_inline_query_current_chat='#filter_genre')
     )
     builder.row(
-        InlineKeyboardButton(text='➡️ Mamlakat tanlash', switch_inline_query_current_chat='filter_country')
+        InlineKeyboardButton(text='➡️ Mamlakat tanlash', switch_inline_query_current_chat='#filter_country')
     )
     builder.row(
         InlineKeyboardButton(text='🎲 Tasodifiy kino', switch_inline_query_current_chat='random_movie')
@@ -29,6 +29,6 @@ def filters_inline_keyboards():
         InlineKeyboardButton(text='🔍 Qidiruv', callback_data='search')
     )
     builder.row(
-        InlineKeyboardButton(text='🔍 Filtr bo\'yicha qidirish', switch_inline_query_current_chat='filter')
+        InlineKeyboardButton(text='🔍 Filtr bo\'yicha qidirish', switch_inline_query_current_chat='#filter')
     )
     return builder.as_markup()
